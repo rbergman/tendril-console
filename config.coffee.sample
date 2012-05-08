@@ -1,0 +1,6 @@
+module.exports =
+  id: "your app id"
+  secret: "your app secret"
+  scope: "account consumption devices ofline_access"
+  route: "sandbox"
+  timeout: 15000
