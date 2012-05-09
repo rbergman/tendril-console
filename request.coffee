@@ -43,8 +43,9 @@ module.exports = (options, next) ->
             body
         next new Error "#{err}#{if desc then '\n' + desc else ''}"
       else
-        next undefined, json, req, res
+        next undefined, json, res
 
   req.write options.body if options.body
 
   req.end()
+  req

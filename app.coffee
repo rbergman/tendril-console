@@ -8,7 +8,8 @@ configure = (next) ->
   require("fs").readFile "#{__dirname}/package.json", "utf8", (err, data) ->
     json = JSON.parse data
     app.version json.version
-    app.option "-u, --username [value]", "A Tendril Connect username appropriate to the configured route"
+    app.option "-u, --username [value[:password]]", "a username appropriate to the configured OAuth x-route"
+    app.option "-v, --verbose", "default to verbose HTTP output"
     app.parse process.argv
     console.log "Connecting to Tendril Connect host '#{config.route}'."
     next()
