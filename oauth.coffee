@@ -15,6 +15,7 @@ exports.login = (options, next) ->
     path: "/oauth/access_token"
     body: "#{(enc(k) + '=' + enc(v) for own k, v of params).join '&'}"
     headers:
+      "Accept": "application/json"
       "Content-Type": "application/x-www-form-urlencoded"
       "X-Route": config.route or "sandbox"
   request args, (err, json) ->

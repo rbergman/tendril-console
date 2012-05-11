@@ -10,7 +10,12 @@ configure = (next) ->
     app.version json.version
     app.option "-u, --username [value[:password]]", "a username appropriate to the configured OAuth x-route"
     app.option "-v, --verbose", "default to verbose HTTP output"
+    app.option "-a, --accept [type]", "set the default accept header to 'xml' or 'json'", "xml"
     app.parse process.argv
+    if app.accept is "json"
+      app.accept = "application/json"
+    else
+      app.accept = "application/xml"
     console.log "Connecting to Tendril Connect host '#{config.route}'."
     next()
 

@@ -1,5 +1,5 @@
-pad = require "pad"
 colors = require "colors"
+XML = require "./xml"
 
 try
   pygments = require "pygments"
@@ -14,15 +14,21 @@ exports.run = (app) ->
       request = require "./request"
       args =
         path: "/connect#{path}"
+        accept: app.accept
         accessToken: app.auth.access_token
       header = (k) -> k.replace /(^[a-z])|((?:-|_)[a-z])/g, (c) -> c.toUpperCase()
-      req = request args, (err, json, res) ->
+      req = request args, (err, json, type, res) ->
         if err
           console.error err.toString()
           prompt()
         else
-          data = JSON.stringify json, null, 2
-          pygments.colorize data, "javascript", "console", (pretty) ->
+          data =
+            if type is "json"
+              type = "javascript"
+              JSON.stringify json, null, 2
+            else
+              XML.stringify json, null, 2
+          pygments.colorize data, type, "console", (pretty) ->
             if app.verbose
               code = res.statusCode
               status = require("http").STATUS_CODES[code]
@@ -43,50 +49,23 @@ exports.run = (app) ->
         console.log "\u21E8 REQUEST".yellow
         console.log "HTTP/1.1 GET #{args.path}"
         for k in Object.keys(req._headers).sort()
-          console.log "#{header k}: #{if k is 'access_token' then '(hidden)' else req._headers[k]}".grey
+          console.log "#{header k}: #{if k is 'access_token' then ' redacted '.inverse else req._headers[k]}".grey
         console.log()
-
-  commands = require("./commands")(http)
-
-  commands.verbose =
-    desc: "toggles verbose HTTP output"
-    run: ->
-      app.verbose = !app.verbose
-      console.log "#{if app.verbose then 'Enabled' else 'Disabled'} verbose output.".green
-      prompt()
-
-  commands.config =
-    desc: "prints the current configuration settings"
-    run: ->
-      config = require "./config"
-      for prop in Object.keys(config).sort()
-        console.log "  #{pad prop, 20}".cyan + "  #{config[prop]}"
-      prompt()
-
-  commands.help =
-    desc: "prints this list of commands and descriptions"
-    run: ->
-      for cmd in Object.keys(commands).sort()
-        console.log "  #{pad cmd, 20}".cyan + "  #{commands[cmd].desc}"
-      prompt()
-
-  commands.quit =
-    desc: "exits the REPL"
-    run: ->
-      process.exit()
 
   prompt = (prefix) ->
     prefix = "> " if not prefix
     app.prompt prefix, (line) ->
       line = line.trim()
-      command = commands[line]
+      command = app.commands[line]
       if command
         command.run()
       else
         if line
           console.warn "Unknown command '#{line}'."
-          commands.help.run()
+          app.commands.help.run()
         else
           prompt()
+
+  app.commands = require("./commands")(prompt, app, http)
 
   prompt()
