@@ -9,6 +9,12 @@ With Node.js v 0.6.x:
     npm install -g coffee-script # if not already installed
     npm install
 
+Next:
+
+    cp config.coffee.sample config.coffee
+
+Then at Tendril's developer site, create an app to acquire an OAuth2 app id and key. Further edit config.coffee to add your app id and secret.
+
 # Usage
 
 Launch the REPL like so:
