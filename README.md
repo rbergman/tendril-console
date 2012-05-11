@@ -17,6 +17,8 @@ Launch the REPL like so:
 
 The command line also takes some optional arguments.  Use the '-h' argument for more information.
 
+Unless specified as a command line argument, you'll be prompted to add a username and password -- when connecting to the Tendril developer sandbox, you may use one of the standard users defined [here](https://dev.tendrilinc.com/docs/sample_users).
+
 Once in the app at the command prompt, type 'help' to get a list of commands.  Currently only a few simple read operations are supported, but they can still be useful for seeing the HTTP requests and responses used to achieve useful interactions with the Tendril APIs.
 
 See the CLI and in-app help for more information.
